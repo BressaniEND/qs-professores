@@ -135,6 +135,43 @@ Essas personas servirão como base para a elaboração de user stories, definiç
 
 ---
 
+## Estratégia de Qualidade — Documentação de Requisitos
+
+A estratégia de qualidade define as práticas obrigatórias para garantir confiabilidade, segurança e desempenho no sistema de alocação de recursos acadêmicos.
+
+### Testes Automatizados
+- **Unitários:** JUnit 5, com testes parametrizados para cobertura de casos de borda.
+- **Integração:** Testes de integração com foco em camadas de serviço e repositório.
+- **API em Caixa-Preta:** Validação de contratos e comportamento observável das APIs públicas.
+- **End-to-End (E2E):** Testes de fluxo completo de usuário (ex: reserva → aprovação → uso → conclusão).
+
+### Ambiente Realista
+- **Banco de Dados Containerizado:** Utilização de Testcontainers para prover instâncias reais de banco (PostgreSQL/MySQL) nos testes de integração.
+- **Simulação de Integrações Externas:** WireMock para mockar serviços externos (ex: gateways de pagamento, APIs de calendário) em testes de integração e E2E.
+
+### Concorrência
+- **Teste de Proteção contra Dupla Reserva:** Teste automatizado que simula requisições simultâneas para o mesmo recurso e verifica que apenas uma é aceita (uso de `ExecutorService` ou ferramentas como Gatling/JMeter em teste de carga leve).
+
+### TDD ou BDD
+- **Evidência de Técnica:** Pelo menos uma funcionalidade nova deve ser desenvolvida usando TDD (Red-Green-Refactor) ou BDD (cenários Gherkin com Cucumber ou similar), com commits e logs demonstrando o ciclo.
+
+### Integração Contínua e Análise Estática
+- **GitHub Actions:** Workflows configurados para executar em pull requests (build, testes, análise estática).
+- **Cobertura de Código:** JaCoCo integrado para gerar relatórios de cobertura (meta: ≥80% em unitários).
+- **SonarCloud:** Projeto vinculado ao SonarCloud para análise de qualidade, segurança, duplicidade e dívida técnica.
+
+### Requisitos Não-Funcionais
+- **Performance:** Testes de carga com JMeter para validar latência e throughput sob uso simultâneo.
+- **Autorização:** Testes específicos de controle de acesso baseado em papéis (RBAC) e elevação de privilégio.
+- **Validação de Entrada:** Sanitização e validação rigorosa de todos os inputs (ex: uso de Bean Validation, testes de injeção).
+- **Tratamento Seguro de Erros:** Logs estruturados, mensagens de erro genéricas para o usuário (sem vazamento de stack traces) e tratamento centralizado de exceções.
+
+### Uso de Mocks
+- **Permitido:** Em testes unitários isolados (ex: mock de dependências de serviço).
+- **Obrigatório com Ambiente Real:** Para camadas de persistência (repositórios) e integrações críticas (APIs externas, filas, serviços de terceiros), utilização de Testcontainers ou WireMock para validar comportamento real.
+
+---
+
 ## Regras Críticas do Sistema
 
 As regras abaixo são fundamentais para garantir a consistência, segurança e rastreabilidade do sistema de alocação. Devem ser consideradas na implementação e nos testes.
